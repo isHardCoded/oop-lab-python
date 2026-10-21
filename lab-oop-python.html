@@ -1,0 +1,1220 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Основы ООП в Python</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/python.min.js"></script>
+<style>
+:root {
+  --bg: #f7f7f5;
+  --surface: #ffffff;
+  --text: #1d1d1f;
+  --muted: #5f6368;
+  --border: #e3e3df;
+  --accent: #2f6fde;
+  --accent-soft: #e8f0fd;
+  --good: #1f8a4c;
+  --good-soft: #e7f5ec;
+  --warn: #b45309;
+  --warn-soft: #fdf3e6;
+  --bad: #c0392b;
+  --code-bg: #f3f4f6;
+  --code-text: #24292f;
+  --tok-kw: #cf222e;
+  --tok-str: #0a3069;
+  --tok-num: #0550ae;
+  --tok-com: #6e7781;
+  --tok-fn: #8250df;
+  --tok-builtin: #953800;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #131416;
+    --surface: #1c1d20;
+    --text: #e8e8ea;
+    --muted: #a0a3a8;
+    --border: #2e3034;
+    --accent: #6ea2ff;
+    --accent-soft: #1d2a42;
+    --good: #4cc27f;
+    --good-soft: #17301f;
+    --warn: #f0a050;
+    --warn-soft: #33261a;
+    --bad: #ff7b6b;
+    --code-bg: #16171a;
+    --code-text: #e6edf3;
+    --tok-kw: #ff7b72;
+    --tok-str: #a5d6ff;
+    --tok-num: #79c0ff;
+    --tok-com: #8b949e;
+    --tok-fn: #d2a8ff;
+    --tok-builtin: #ffa657;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #131416;
+  --surface: #1c1d20;
+  --text: #e8e8ea;
+  --muted: #a0a3a8;
+  --border: #2e3034;
+  --accent: #6ea2ff;
+  --accent-soft: #1d2a42;
+  --good: #4cc27f;
+  --good-soft: #17301f;
+  --warn: #f0a050;
+  --warn-soft: #33261a;
+  --bad: #ff7b6b;
+  --code-bg: #16171a;
+  --code-text: #e6edf3;
+  --tok-kw: #ff7b72;
+  --tok-str: #a5d6ff;
+  --tok-num: #79c0ff;
+  --tok-com: #8b949e;
+  --tok-fn: #d2a8ff;
+  --tok-builtin: #ffa657;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 24px; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+  font: 16px/1.65 Inter, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  max-width: 1180px;
+  margin: 0 auto;
+  gap: 40px;
+  padding: 0 24px;
+}
+
+/* ---------- TOC ---------- */
+nav.toc {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  max-height: 100vh;
+  overflow-y: auto;
+  padding: 32px 0;
+  font-size: 14px;
+}
+.toc .toc-title {
+  font-size: 12px; font-weight: 600; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted); margin: 0 0 12px 12px;
+}
+.toc a {
+  display: block; padding: 6px 12px; border-radius: 8px;
+  color: var(--muted); text-decoration: none; border-left: 2px solid transparent;
+}
+.toc a:hover { color: var(--text); background: var(--surface); }
+.toc a.active { color: var(--accent); background: var(--accent-soft); font-weight: 500; }
+.theme-btn {
+  margin: 20px 0 0 12px; padding: 6px 12px; font: inherit; font-size: 13px;
+  background: var(--surface); color: var(--text);
+  border: 1px solid var(--border); border-radius: 8px; cursor: pointer;
+}
+
+/* ---------- Content ---------- */
+main { padding: 32px 0 96px; min-width: 0; }
+
+.hero {
+  background: linear-gradient(135deg, var(--accent-soft), var(--surface));
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 40px;
+  margin-bottom: 32px;
+}
+.hero .kicker {
+  display: inline-block; font-size: 13px; font-weight: 600; color: var(--accent);
+  background: var(--surface); border: 1px solid var(--border);
+  padding: 4px 12px; border-radius: 999px; margin-bottom: 16px;
+}
+.hero h1 { font-size: 40px; line-height: 1.15; margin: 0 0 12px; letter-spacing: -0.02em; }
+.hero p { color: var(--muted); margin: 0; max-width: 620px; font-size: 17px; }
+.hero .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 24px; }
+.hero .meta span {
+  font-size: 13px; background: var(--surface); border: 1px solid var(--border);
+  padding: 6px 12px; border-radius: 8px; color: var(--muted);
+}
+.hero .meta b { color: var(--text); font-weight: 600; }
+
+section.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 32px 40px;
+  margin-bottom: 24px;
+}
+h2 {
+  font-size: 26px; line-height: 1.25; margin: 0 0 16px; letter-spacing: -0.01em;
+  display: flex; align-items: baseline; gap: 12px;
+}
+h2 .num {
+  flex: none; display: inline-grid; place-items: center;
+  width: 36px; height: 36px; border-radius: 10px;
+  background: var(--accent-soft); color: var(--accent); font-size: 17px; font-weight: 700;
+  transform: translateY(-3px);
+}
+h3 { font-size: 19px; margin: 32px 0 10px; }
+p { margin: 0 0 14px; }
+ul, ol { margin: 0 0 16px; padding-left: 24px; }
+li { margin: 4px 0; }
+strong { font-weight: 600; }
+a { color: var(--accent); }
+
+code {
+  font-family: "JetBrains Mono", Consolas, monospace;
+  font-size: .88em;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  padding: 1px 6px; border-radius: 6px;
+}
+pre {
+  position: relative;
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 20px;
+  overflow-x: auto;
+  margin: 0 0 18px;
+  font-size: 14px;
+  line-height: 1.6;
+}
+pre code { background: none; border: 0; padding: 0; font-size: inherit; color: var(--code-text); }
+pre.output { border-left: 3px solid var(--good); }
+pre.output::before {
+  content: "Вывод"; display: block; font: 600 11px Inter, sans-serif;
+  letter-spacing: .08em; text-transform: uppercase; color: var(--good); margin-bottom: 8px;
+}
+.copy-btn {
+  position: absolute; top: 10px; right: 10px;
+  font: 500 12px Inter, sans-serif; padding: 4px 10px;
+  background: var(--surface); color: var(--muted);
+  border: 1px solid var(--border); border-radius: 6px; cursor: pointer;
+  opacity: 0; transition: opacity .15s;
+}
+pre:hover .copy-btn, .copy-btn:focus { opacity: 1; }
+
+.hljs-keyword, .hljs-literal { color: var(--tok-kw); }
+.hljs-string { color: var(--tok-str); }
+.hljs-number { color: var(--tok-num); }
+.hljs-comment { color: var(--tok-com); font-style: italic; }
+.hljs-title, .hljs-title.function_, .hljs-title.class_ { color: var(--tok-fn); }
+.hljs-built_in, .hljs-meta { color: var(--tok-builtin); }
+.hljs-params { color: inherit; }
+.hljs-subst { color: var(--code-text); }
+
+table { width: 100%; border-collapse: collapse; margin: 0 0 18px; font-size: 15px; }
+.table-wrap { overflow-x: auto; margin: 0 0 18px; border: 1px solid var(--border); border-radius: 12px; }
+.table-wrap table { margin: 0; }
+th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { background: var(--code-bg); font-weight: 600; font-size: 14px; }
+tr:last-child td { border-bottom: 0; }
+
+.callout {
+  border-radius: 12px; padding: 16px 20px; margin: 20px 0 0;
+  background: var(--accent-soft); border: 1px solid var(--border);
+}
+.callout .label {
+  font-size: 12px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase;
+  color: var(--accent); display: block; margin-bottom: 4px;
+}
+.callout p:last-child { margin-bottom: 0; }
+.callout.warn { background: var(--warn-soft); }
+.callout.warn .label { color: var(--warn); }
+details { margin-top: 8px; }
+summary { cursor: pointer; color: var(--accent); font-weight: 500; font-size: 15px; }
+
+.analogy {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: var(--good-soft); border-radius: 12px; padding: 16px 20px; margin: 0 0 18px;
+}
+.analogy .icon { font-size: 22px; line-height: 1.3; }
+.analogy p { margin: 0; }
+
+.steps { counter-reset: s; list-style: none; padding: 0; }
+.steps li {
+  counter-increment: s; position: relative; padding-left: 40px; margin: 10px 0;
+}
+.steps li::before {
+  content: counter(s); position: absolute; left: 0; top: 1px;
+  width: 26px; height: 26px; border-radius: 50%;
+  background: var(--accent-soft); color: var(--accent);
+  font-size: 13px; font-weight: 700; display: grid; place-items: center;
+}
+
+.principles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; margin: 0 0 8px; }
+.principle { border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; background: var(--bg); }
+.principle h4 { margin: 0 0 4px; font-size: 16px; }
+.principle p { margin: 0 0 8px; font-size: 15px; color: var(--muted); }
+.principle .tools { font-size: 13px; }
+
+figure { margin: 8px 0 20px; }
+figure svg { width: 100%; height: auto; display: block; }
+figcaption { font-size: 14px; color: var(--muted); margin-top: 8px; }
+
+.task {
+  border: 1px solid var(--border); border-radius: 14px; padding: 24px 28px; margin: 0 0 20px;
+  background: var(--bg);
+}
+.task-head { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-bottom: 12px; }
+.task-head h3 { margin: 0; font-size: 18px; }
+.tag {
+  font-size: 12px; font-weight: 600; padding: 3px 10px; border-radius: 999px;
+  background: var(--accent-soft); color: var(--accent);
+}
+.tag.star { background: var(--warn-soft); color: var(--warn); }
+
+.formula {
+  text-align: center; font-family: "Cambria Math", "Times New Roman", serif;
+  font-size: 22px; padding: 14px; margin: 0 0 18px;
+  background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+}
+
+.grade { font-weight: 700; white-space: nowrap; }
+.grade.g5 { color: var(--good); }
+.grade.g4 { color: var(--accent); }
+.grade.g3 { color: var(--warn); }
+.grade.g2 { color: var(--bad); }
+
+footer { text-align: center; color: var(--muted); font-size: 14px; margin-top: 40px; }
+
+@media (max-width: 900px) {
+  .layout { grid-template-columns: minmax(0, 1fr); padding: 0 16px; gap: 0; }
+  nav.toc { display: none; }
+  .hero { padding: 28px 22px; }
+  .hero h1 { font-size: 30px; }
+  section.card { padding: 24px 20px; }
+  .task { padding: 20px 18px; }
+  .principles { grid-template-columns: minmax(0, 1fr); }
+  h2 { font-size: 22px; }
+}
+@media print {
+  nav.toc, .copy-btn, .theme-btn { display: none !important; }
+  .layout { display: block; }
+  body { background: #fff; }
+  section.card, .task { break-inside: auto; border-color: #ccc; }
+  pre { white-space: pre-wrap; }
+  details { display: block; }
+  details > * { display: block !important; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+
+<nav class="toc" aria-label="Содержание">
+  <p class="toc-title">Содержание</p>
+  <a href="#goal">Цель работы</a>
+  <a href="#s1">1. Что такое ООП</a>
+  <a href="#s2">2. Класс и объект</a>
+  <a href="#s3">3. __init__, self, атрибуты</a>
+  <a href="#s4">4. Методы, __str__, __repr__</a>
+  <a href="#s5">5. Инкапсуляция</a>
+  <a href="#s6">6. Наследование</a>
+  <a href="#s7">7. Полиморфизм и абстракция</a>
+  <a href="#s8">8. Типичные ошибки</a>
+  <a href="#s9">9. Практические задания</a>
+  <a href="#s10">10. Вопросы и оценка</a>
+  <button class="theme-btn" type="button" id="themeBtn">Сменить тему</button>
+</nav>
+
+<main>
+
+<header class="hero">
+  <span class="kicker">Лабораторная работа</span>
+  <h1>Основы ООП в Python</h1>
+  <p>Классы, объекты и четыре принципа объектно-ориентированного программирования: от первого <code>class</code> до абстрактных классов.</p>
+  <div class="meta">
+    <span><b>4</b> академических часа</span>
+    <span><b>10</b> разделов теории</span>
+    <span><b>6</b> практических заданий</span>
+    <span>Python <b>3.10+</b></span>
+  </div>
+</header>
+
+<!-- ================= ЦЕЛЬ ================= -->
+<section class="card" id="goal">
+  <h2>Цель работы</h2>
+  <p>Научиться описывать программу через классы и объекты: создавать свои классы, хранить в них данные, писать методы и применять четыре принципа ООП — абстракцию, инкапсуляцию, наследование и полиморфизм.</p>
+
+  <h3>После выполнения работы студент умеет</h3>
+  <ul>
+    <li>объяснить своими словами, что такое класс, объект, атрибут и метод;</li>
+    <li>написать класс с конструктором <code>__init__</code> и понимать, зачем нужен <code>self</code>;</li>
+    <li>отличать атрибуты экземпляра от атрибутов класса;</li>
+    <li>защищать данные объекта через <code>_</code>, <code>__</code> и <code>@property</code>;</li>
+    <li>создавать дочерний класс, вызывать <code>super()</code> и переопределять методы;</li>
+    <li>писать код, который одинаково работает с объектами разных классов (полиморфизм).</li>
+  </ul>
+
+  <h3>Что понадобится</h3>
+  <ul>
+    <li>Python версии 3.10 или новее (проверить: <code>python --version</code> в терминале);</li>
+    <li>любой редактор: VS Code, PyCharm, Thonny или IDLE;</li>
+    <li>знание основ: переменные, <code>if</code>, циклы, функции, списки и словари.</li>
+  </ul>
+
+  <div class="callout">
+    <span class="label">Как работать с методичкой</span>
+    <p>Читайте теорию по порядку и запускайте каждый пример у себя — не копируйте, а набирайте вручную. После каждого раздела есть вопрос «Проверь себя»: ответьте на него устно, прежде чем идти дальше. Практические задания в конце опираются на всю теорию.</p>
+  </div>
+</section>
+
+<!-- ================= 1 ================= -->
+<section class="card" id="s1">
+  <h2><span class="num">1</span>Что такое ООП и зачем оно нужно</h2>
+  <p><strong>Объектно-ориентированное программирование (ООП)</strong> — это способ писать программы, при котором данные и действия над ними объединяются в одно целое — <strong>объект</strong>. Программа становится набором объектов, которые хранят своё состояние и умеют что-то делать.</p>
+
+  <h3>Сначала — процедурный подход</h3>
+  <p>До сих пор вы писали процедурно: данные лежат в переменных и словарях, а функции живут отдельно и получают эти данные аргументами. Пример — банковский счёт:</p>
+<pre><code class="language-python">account = {"owner": "Анна", "balance": 1000}
+
+def deposit(acc, amount):
+    acc["balance"] += amount
+
+def withdraw(acc, amount):
+    if amount > acc["balance"]:
+        print("Недостаточно средств")
+        return
+    acc["balance"] -= amount
+
+deposit(account, 500)
+withdraw(account, 200)
+print(account["balance"])  # 1300</code></pre>
+  <p>Пока программа маленькая, это работает. Но проблемы уже видны:</p>
+  <ul>
+    <li>ничто не мешает написать <code>account["balance"] = -999999</code> и обойти проверку в <code>withdraw</code>;</li>
+    <li>опечатка в ключе (<code>"balanse"</code>) найдётся только во время работы;</li>
+    <li>функции для счёта разбросаны по коду, и не понятно, какие из них относятся к счёту, а какие — к чему-то другому.</li>
+  </ul>
+
+  <h3>То же самое в стиле ООП</h3>
+<pre><code class="language-python">class BankAccount:
+    def __init__(self, owner, balance):
+        self.owner = owner
+        self.balance = balance
+
+    def deposit(self, amount):
+        self.balance += amount
+
+    def withdraw(self, amount):
+        if amount > self.balance:
+            print("Недостаточно средств")
+            return
+        self.balance -= amount
+
+account = BankAccount("Анна", 1000)
+account.deposit(500)
+account.withdraw(200)
+print(account.balance)  # 1300</code></pre>
+  <p>Теперь данные (<code>owner</code>, <code>balance</code>) и действия (<code>deposit</code>, <code>withdraw</code>) лежат в одном месте. Вызов <code>account.deposit(500)</code> читается как обычное предложение: «счёт, положи 500». В разделе про инкапсуляцию мы ещё и запретим прямо портить баланс.</p>
+
+  <h3>Аналогия из жизни</h3>
+  <div class="analogy">
+    <span class="icon" aria-hidden="true">🚗</span>
+    <p>Представьте чертёж автомобиля. В нём написано: у машины есть цвет, марка и скорость; машина умеет ехать, тормозить и сигналить. Чертёж — это <strong>класс</strong>. По одному чертежу завод выпускает тысячи настоящих машин: красную, синюю, белую. Каждая машина — это <strong>объект</strong>. У всех их одинаковый набор свойств, но значения свои.</p>
+  </div>
+
+  <h3>Что даёт ООП</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Плюс</th><th>Что это значит на практике</th></tr>
+    <tr><td>Порядок в коде</td><td>Всё про счёт лежит в классе <code>BankAccount</code>, всё про студента — в классе <code>Student</code></td></tr>
+    <tr><td>Защита данных</td><td>Объект сам проверяет, какие значения можно записать</td></tr>
+    <tr><td>Повторное использование</td><td>Новый класс можно унаследовать от старого и не писать код заново</td></tr>
+    <tr><td>Простое расширение</td><td>Новый вид объекта добавляется без переделки старого кода</td></tr>
+    <tr><td>Понятность</td><td>Код повторяет предметную область: «студент», «курс», «оценка»</td></tr>
+  </table></div>
+
+  <p>Интересный факт: в Python <strong>всё является объектом</strong>. Вы уже пользовались ООП, сами того не зная:</p>
+<pre><code class="language-python">names = ["Анна", "Борис"]   # names — объект класса list
+names.append("Вера")          # append — метод этого объекта
+
+text = "привет"              # text — объект класса str
+print(text.upper())         # ПРИВЕТ
+print(type(text))           # &lt;class 'str'&gt;</code></pre>
+
+  <div class="callout">
+    <span class="label">Проверь себя</span>
+    <p>Назовите две проблемы процедурного варианта счёта, которые решает ООП. Чем чертёж отличается от машины?</p>
+  </div>
+</section>
+
+<!-- ================= 2 ================= -->
+<section class="card" id="s2">
+  <h2><span class="num">2</span>Класс и объект</h2>
+  <p><strong>Класс</strong> — это шаблон (чертёж), который описывает, какие данные будут у объектов и что они смогут делать. <strong>Объект</strong> (или <strong>экземпляр</strong>) — это конкретная вещь, созданная по этому шаблону. Класс один, объектов может быть сколько угодно.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Термин</th><th>Простыми словами</th><th>Пример</th></tr>
+    <tr><td>Класс</td><td>Чертёж, тип</td><td><code>Cat</code></td></tr>
+    <tr><td>Объект / экземпляр</td><td>Конкретная вещь по чертежу</td><td><code>murka = Cat()</code></td></tr>
+    <tr><td>Атрибут (поле, свойство)</td><td>Данные объекта, его «прилагательные»</td><td><code>murka.name</code>, <code>murka.age</code></td></tr>
+    <tr><td>Метод</td><td>Функция внутри класса, «глагол» объекта</td><td><code>murka.meow()</code></td></tr>
+  </table></div>
+
+  <h3>Синтаксис объявления класса</h3>
+<pre><code class="language-python">class Cat:
+    pass</code></pre>
+  <p>Разберём по частям:</p>
+  <ol class="steps">
+    <li><code>class</code> — ключевое слово, которое говорит Python: «сейчас будет описание класса».</li>
+    <li><code>Cat</code> — имя класса. По соглашению (PEP 8) имена классов пишутся в стиле <strong>CamelCase</strong>: каждое слово с большой буквы, без подчёркиваний — <code>Cat</code>, <code>BankAccount</code>, <code>StudentGroup</code>.</li>
+    <li><code>:</code> и отступ — всё, что написано с отступом ниже, относится к классу (как у <code>if</code> и <code>def</code>).</li>
+    <li><code>pass</code> — «ничего не делать». Тело класса не может быть пустым, поэтому пока наполняем его заглушкой.</li>
+  </ol>
+
+  <h3>Создание объектов</h3>
+  <p>Чтобы создать объект, класс «вызывают» как функцию — со скобками:</p>
+<pre><code class="language-python">murka = Cat()
+barsik = Cat()
+
+print(type(murka))        # &lt;class '__main__.Cat'&gt;
+print(murka is barsik)    # False — это два разных объекта
+print(isinstance(murka, Cat))  # True — murka является кошкой</code></pre>
+  <p>Обратите внимание: <code>Cat</code> — это сам класс, а <code>Cat()</code> — создание нового объекта. Каждый вызов <code>Cat()</code> создаёт новую, независимую кошку в памяти.</p>
+  <p>Функция <code>isinstance(объект, Класс)</code> отвечает на вопрос «принадлежит ли объект этому классу». Она пригодится позже, когда появятся наследники.</p>
+
+  <div class="callout">
+    <span class="label">Проверь себя</span>
+    <p>Сколько объектов создаст код <code>a = Cat(); b = a; c = Cat()</code>?</p>
+    <details><summary>Показать ответ</summary><p>Два — <code>b</code> лишь второе имя для того же объекта, что и <code>a</code>.</p></details>
+  </div>
+</section>
+
+<!-- ================= 3 ================= -->
+<section class="card" id="s3">
+  <h2><span class="num">3</span>Конструктор <code>__init__</code>, <code>self</code> и атрибуты</h2>
+  <p>Конструктор <code>__init__</code> — это специальный метод, который Python вызывает <strong>автоматически</strong> сразу после создания объекта. Его задача — заполнить новый объект начальными данными. Имя пишется с двумя подчёркиваниями с каждой стороны: <code>__init__</code> (от англ. <em>initialize</em> — «инициализировать»).</p>
+<pre><code class="language-python">class Cat:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+murka = Cat("Мурка", 3)
+barsik = Cat("Барсик", 5)
+
+print(murka.name, murka.age)    # Мурка 3
+print(barsik.name, barsik.age)  # Барсик 5</code></pre>
+
+  <h3>Что происходит при вызове <code>Cat("Мурка", 3)</code></h3>
+  <ol class="steps">
+    <li>Python создаёт новый пустой объект класса <code>Cat</code>.</li>
+    <li>Python вызывает <code>__init__</code> и сам подставляет этот новый объект первым аргументом — в <code>self</code>. В <code>name</code> попадает <code>"Мурка"</code>, в <code>age</code> — <code>3</code>.</li>
+    <li>Строки <code>self.name = name</code> и <code>self.age = age</code> создают у объекта два атрибута.</li>
+    <li>Готовый объект возвращается и записывается в переменную <code>murka</code>.</li>
+  </ol>
+  <p><code>__init__</code> ничего не возвращает (<code>return</code> в нём не пишут). Он только настраивает уже созданный объект.</p>
+
+  <h3>Что такое <code>self</code></h3>
+  <p><code>self</code> — это ссылка на <strong>тот самый объект</strong>, с которым сейчас работает метод. Когда метод вызван для <code>murka</code>, <code>self</code> — это <code>murka</code>; когда для <code>barsik</code> — это <code>barsik</code>. Именно так один и тот же код класса работает с разными объектами.</p>
+  <div class="analogy">
+    <span class="icon" aria-hidden="true">🙋</span>
+    <p>Когда человек говорит «моё имя», слово «моё» у каждого означает своё. <code>self.name</code> — это «моё имя» с точки зрения объекта.</p>
+  </div>
+  <p>Правила про <code>self</code>, которые нужно запомнить:</p>
+  <ul>
+    <li><code>self</code> — всегда <strong>первый</strong> параметр обычного метода;</li>
+    <li>при вызове метода <code>self</code> <strong>не передают</strong> — Python подставляет его сам: пишем <code>Cat("Мурка", 3)</code>, а не <code>Cat(murka, "Мурка", 3)</code>;</li>
+    <li>слово <code>self</code> — соглашение, а не ключевое слово, но использовать другое имя — плохой тон: так никто не пишет;</li>
+    <li>внутри класса к атрибутам и методам объекта обращаются только через <code>self.</code>.</li>
+  </ul>
+  <p>Разница между <code>name</code> и <code>self.name</code> в конструкторе: <code>name</code> — обычный параметр функции, он исчезнет после выхода из <code>__init__</code>. <code>self.name</code> — атрибут, он остаётся в объекте, пока живёт сам объект.</p>
+
+  <h3>Значения по умолчанию и вычисляемые атрибуты</h3>
+  <p>Конструктор — обычная функция, поэтому в нём работают значения по умолчанию, проверки и вычисления. Атрибут не обязан приходить из параметра:</p>
+<pre><code class="language-python">class Student:
+    def __init__(self, name, group="ИС-21"):
+        self.name = name
+        self.group = group
+        self.grades = []          # у каждого студента свой пустой список
+
+anna = Student("Анна")
+boris = Student("Борис", "ИС-22")
+
+anna.grades.append(5)
+print(anna.group, anna.grades)    # ИС-21 [5]
+print(boris.group, boris.grades)  # ИС-22 []</code></pre>
+
+  <h3>Атрибуты экземпляра и атрибуты класса</h3>
+  <p>Атрибуты через <code>self.</code> принадлежат одному объекту. Но иногда нужно значение, общее для всех объектов класса. Такой атрибут пишут прямо в теле класса, без <code>self</code>:</p>
+<pre><code class="language-python">class Cat:
+    species = "Кошка домашняя"   # атрибут класса — общий
+    count = 0                     # счётчик созданных кошек
+
+    def __init__(self, name):
+        self.name = name          # атрибут экземпляра — свой
+        Cat.count += 1            # меняем через имя класса!
+
+a = Cat("Мурка")
+b = Cat("Барсик")
+print(a.species, b.species)  # Кошка домашняя Кошка домашняя
+print(Cat.count)             # 2</code></pre>
+  <div class="table-wrap"><table>
+    <tr><th></th><th>Атрибут экземпляра</th><th>Атрибут класса</th></tr>
+    <tr><td><strong>Где создаётся</strong></td><td>В методах, через <code>self.x = ...</code></td><td>В теле класса, <code>x = ...</code></td></tr>
+    <tr><td><strong>Кому принадлежит</strong></td><td>Одному объекту</td><td>Всем объектам сразу</td></tr>
+    <tr><td><strong>Пример</strong></td><td>Имя, возраст, баланс</td><td>Вид животного, счётчик объектов, константа</td></tr>
+    <tr><td><strong>Как изменить</strong></td><td><code>obj.x = ...</code></td><td><code>Класс.x = ...</code></td></tr>
+  </table></div>
+  <div class="callout warn">
+    <span class="label">Ловушка</span>
+    <p>Если написать <code>a.count = 100</code>, счётчик класса не изменится. Python создаст у объекта <code>a</code> новый личный атрибут <code>count</code>, который заслонит общий. Поэтому атрибут класса меняют через имя класса: <code>Cat.count</code>.</p>
+  </div>
+  <div class="callout">
+    <span class="label">Проверь себя</span>
+    <p>Почему список оценок <code>grades</code> создан в <code>__init__</code>, а не как атрибут класса? Что случилось бы, если бы все студенты делили один список?</p>
+  </div>
+</section>
+
+<!-- ================= 4 ================= -->
+<section class="card" id="s4">
+  <h2><span class="num">4</span>Методы и специальные методы <code>__str__</code> и <code>__repr__</code></h2>
+  <p><strong>Метод</strong> — это функция, объявленная внутри класса. Он описывает, что объект умеет делать, и через <code>self</code> имеет доступ к данным объекта. Если атрибуты — это «что объект знает», то методы — «что объект умеет».</p>
+<pre><code class="language-python">class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def area(self):
+        return self.width * self.height
+
+    def perimeter(self):
+        return 2 * (self.width + self.height)
+
+    def scale(self, factor):
+        self.width *= factor
+        self.height *= factor
+
+    def is_square(self):
+        return self.width == self.height
+
+r = Rectangle(3, 4)
+print(r.area())        # 12
+print(r.perimeter())   # 14
+r.scale(2)
+print(r.width, r.height)  # 6 8
+print(r.is_square())   # False</code></pre>
+  <p>Методы бывают двух видов по смыслу:</p>
+  <ul>
+    <li><strong>возвращают результат</strong> и не меняют объект — <code>area()</code>, <code>perimeter()</code>, <code>is_square()</code>;</li>
+    <li><strong>меняют состояние</strong> объекта — <code>scale()</code>. Такие методы часто ничего не возвращают (то есть возвращают <code>None</code>).</li>
+  </ul>
+  <p>Не забывайте круглые скобки при вызове: <code>r.area()</code> вызывает метод и даёт число, а <code>r.area</code> — это сам метод как объект. <code>print(r.area)</code> напечатает что-то вроде <code>&lt;bound method Rectangle.area of ...&gt;</code>.</p>
+
+  <h3>Метод может вызывать другой метод</h3>
+  <p>Внутри класса методы вызывают друг друга тоже через <code>self</code>:</p>
+<pre><code class="language-python">    def describe(self):
+        return f"Прямоугольник {self.width}x{self.height}, площадь {self.area()}"</code></pre>
+
+  <h3>Магические (dunder) методы</h3>
+  <p>Методы, имена которых начинаются и заканчиваются двумя подчёркиваниями, называют <strong>магическими</strong> или <em>dunder</em>-методами (от <em>double underscore</em>). Их не вызывают напрямую: Python сам вызывает их в нужный момент. <code>__init__</code> — первый такой метод, с которым вы познакомились.</p>
+  <p>Сразу запустите такой код — вывод вас разочарует:</p>
+<pre><code class="language-python">r = Rectangle(3, 4)
+print(r)   # &lt;__main__.Rectangle object at 0x0000021F3A8B5D50&gt;</code></pre>
+  <p>Python не знает, как красиво показать наш объект, и печатает имя класса и адрес в памяти. Исправим это:</p>
+<pre><code class="language-python">class Rectangle:
+    def __init__(self, width, height):
+        self.width = width
+        self.height = height
+
+    def __str__(self):
+        return f"Прямоугольник {self.width}x{self.height}"
+
+    def __repr__(self):
+        return f"Rectangle({self.width}, {self.height})"
+
+r = Rectangle(3, 4)
+print(r)          # Прямоугольник 3x4      ← __str__
+print(str(r))     # Прямоугольник 3x4      ← __str__
+print(repr(r))    # Rectangle(3, 4)            ← __repr__
+print([r, r])     # [Rectangle(3, 4), Rectangle(3, 4)]  ← в списке — __repr__</code></pre>
+  <div class="table-wrap"><table>
+    <tr><th>Метод</th><th>Для кого</th><th>Когда вызывается</th></tr>
+    <tr><td><code>__str__</code></td><td>Для пользователя: понятный текст</td><td><code>print(obj)</code>, <code>str(obj)</code>, f-строки</td></tr>
+    <tr><td><code>__repr__</code></td><td>Для программиста: точное описание, в идеале — как воссоздать объект</td><td><code>repr(obj)</code>, вывод в консоли, внутри списков и словарей</td></tr>
+  </table></div>
+  <p>Оба метода обязаны <strong>возвращать строку</strong> (<code>return</code>), а не печатать её. Если есть только <code>__repr__</code>, Python использует его и для <code>print</code>.</p>
+  <p>Другие полезные магические методы (для знакомства):</p>
+  <div class="table-wrap"><table>
+    <tr><th>Метод</th><th>Что запускает</th></tr>
+    <tr><td><code>__len__(self)</code></td><td><code>len(obj)</code></td></tr>
+    <tr><td><code>__eq__(self, other)</code></td><td><code>obj == other</code></td></tr>
+    <tr><td><code>__lt__(self, other)</code></td><td><code>obj &lt; other</code>, а значит, и <code>sorted()</code></td></tr>
+    <tr><td><code>__add__(self, other)</code></td><td><code>obj + other</code></td></tr>
+  </table></div>
+  <div class="callout">
+    <span class="label">Проверь себя</span>
+    <p>Что напечатает <code>print(r.area)</code> без скобок и почему? Что случится, если в <code>__str__</code> написать <code>print(...)</code> вместо <code>return ...</code>?</p>
+    <details><summary>Показать ответ</summary><p>Без скобок печатается сам метод: <code>&lt;bound method ...&gt;</code>. С <code>print</code> внутри <code>__str__</code> метод вернёт <code>None</code>, и Python выдаст <code>TypeError: __str__ returned non-string</code>.</p></details>
+  </div>
+</section>
+
+<!-- ================= 5 ================= -->
+<section class="card" id="s5">
+  <h2><span class="num">5</span>Инкапсуляция</h2>
+  <p><strong>Инкапсуляция</strong> — это принцип, по которому объект скрывает своё внутреннее устройство и даёт работать со своими данными только через свои методы. Так объект сам следит, чтобы его данные оставались корректными.</p>
+  <div class="analogy">
+    <span class="icon" aria-hidden="true">🏧</span>
+    <p>У банкомата есть экран и кнопки — это его «публичный интерфейс». Деньги лежат внутри в сейфе, и достать их руками нельзя. Вы просите снять 1000, банкомат сам проверяет баланс и решает, выдавать ли деньги.</p>
+  </div>
+
+  <h3>Уровни доступа в Python</h3>
+  <p>В Python нет ключевых слов <code>private</code> и <code>public</code>, как в C# или Java. Вместо них используют соглашения об именах:</p>
+  <div class="table-wrap"><table>
+    <tr><th>Запись</th><th>Название</th><th>Что означает</th></tr>
+    <tr><td><code>self.name</code></td><td>Публичный</td><td>Можно свободно читать и менять снаружи</td></tr>
+    <tr><td><code>self._name</code></td><td>Защищённый</td><td>«Внутреннее, не трогайте». Доступ технически есть, но это просьба к другим программистам</td></tr>
+    <tr><td><code>self.__name</code></td><td>Приватный</td><td>Python переименовывает атрибут в <code>_Класс__name</code>, и по имени <code>obj.__name</code> снаружи его уже не найти</td></tr>
+  </table></div>
+  <p>Переименование с двумя подчёркиваниями называется <em>name mangling</em>. Это не настоящая защита, а защита от случайного доступа: в Python принято доверять программисту («мы все взрослые люди»).</p>
+<pre><code class="language-python">class BankAccount:
+    def __init__(self, owner, balance=0):
+        self.owner = owner
+        self.__balance = balance      # приватный атрибут
+
+    def deposit(self, amount):
+        if amount <= 0:
+            raise ValueError("Сумма должна быть положительной")
+        self.__balance += amount
+
+    def withdraw(self, amount):
+        if amount > self.__balance:
+            raise ValueError("Недостаточно средств")
+        self.__balance -= amount
+
+    def get_balance(self):
+        return self.__balance
+
+acc = BankAccount("Анна", 1000)
+acc.deposit(500)
+print(acc.get_balance())   # 1500
+print(acc.__balance)       # AttributeError: 'BankAccount' object has no attribute '__balance'</code></pre>
+  <p>Теперь баланс меняется только через <code>deposit</code> и <code>withdraw</code>, а те проверяют данные. <code>raise ValueError(...)</code> — это способ сообщить об ошибке: программа остановится с понятным сообщением, если ошибку не перехватить через <code>try/except</code>.</p>
+
+  <h3>Свойства: декоратор <code>@property</code></h3>
+  <p>Писать <code>get_balance()</code> и <code>set_balance()</code> неудобно. Python предлагает более изящный способ — <strong>свойства</strong>. Снаружи они выглядят как обычный атрибут, но внутри при чтении и записи вызываются методы.</p>
+<pre><code class="language-python">class Student:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age          # здесь уже сработает сеттер!
+
+    @property
+    def age(self):              # геттер — чтение
+        return self._age
+
+    @age.setter
+    def age(self, value):       # сеттер — запись с проверкой
+        if not 14 <= value <= 100:
+            raise ValueError("Возраст должен быть от 14 до 100")
+        self._age = value
+
+s = Student("Анна", 19)
+print(s.age)    # 19     ← без скобок, как атрибут
+s.age = 20      # вызывается сеттер, проверка проходит
+s.age = -5      # ValueError: Возраст должен быть от 14 до 100</code></pre>
+  <p>Как это устроено:</p>
+  <ol class="steps">
+    <li><code>@property</code> превращает метод <code>age</code> в свойство. Теперь <code>s.age</code> вызывает этот метод без скобок.</li>
+    <li><code>@age.setter</code> описывает, что делать при присваивании <code>s.age = ...</code>. Имя метода должно совпадать с именем свойства.</li>
+    <li>Реальное значение хранится в <code>self._age</code> — с подчёркиванием. Если написать в сеттере <code>self.age = value</code>, сеттер будет вызывать сам себя бесконечно (<code>RecursionError</code>).</li>
+    <li>В <code>__init__</code> мы пишем <code>self.age = age</code>, а не <code>self._age</code> — тогда проверка сработает и при создании объекта.</li>
+  </ol>
+  <p>Свойство без сеттера доступно <strong>только для чтения</strong>. Так удобно делать вычисляемые значения:</p>
+<pre><code class="language-python">class Circle:
+    def __init__(self, radius):
+        self.radius = radius
+
+    @property
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+c = Circle(2)
+print(c.area)   # 12.56636
+c.area = 100    # AttributeError: property 'area' of 'Circle' object has no setter</code></pre>
+  <div class="callout">
+    <span class="label">Проверь себя</span>
+    <p>Чем <code>_balance</code> отличается от <code>__balance</code>? Почему в сеттере нельзя писать <code>self.age = value</code>?</p>
+  </div>
+</section>
+
+<!-- ================= 6 ================= -->
+<section class="card" id="s6">
+  <h2><span class="num">6</span>Наследование</h2>
+  <p><strong>Наследование</strong> — это создание нового класса на основе уже существующего. Новый класс (<strong>дочерний</strong>, наследник) получает все атрибуты и методы старого (<strong>родительского</strong>, базового) и может добавить свои или изменить унаследованные. Так общий код пишется один раз.</p>
+  <p>Наследование описывает отношение <strong>«является»</strong> (<em>is-a</em>): собака является животным, студент является человеком. Если фраза «X является Y» звучит странно («машина является двигателем»), наследование тут не подходит: у машины двигатель просто <strong>есть</strong> (это атрибут).</p>
+
+  <figure>
+    <svg viewBox="0 0 760 312" role="img" aria-label="Dog и Cat получают всё от Animal и добавляют своё" font-family="Inter, system-ui, sans-serif" font-size="13">
+      <defs>
+        <marker id="inh-arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="9" markerHeight="9" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.25"/>
+        </marker>
+      </defs>
+      <text x="24" y="32" font-size="15" font-weight="600" fill="var(--text)">Dog и Cat получают всё от Animal и добавляют своё</text>
+      <g fill="none" stroke="var(--muted)" stroke-width="1.25">
+        <path d="M200 200V176H560V200"/>
+        <path d="M380 176V150" marker-end="url(#inh-arrow)"/>
+      </g>
+      <text x="392" y="168" font-size="11.5" fill="var(--muted)">наследуют от</text>
+      <rect x="250" y="60" width="260" height="88" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="2"/>
+      <text x="380" y="84" text-anchor="middle" font-weight="600" fill="var(--text)">Animal (родитель)</text>
+      <text x="266" y="104" font-size="11.5" fill="var(--text)">name — атрибут</text>
+      <text x="266" y="120" font-size="11.5" fill="var(--text)">info() — общий метод</text>
+      <text x="266" y="136" font-size="11.5" fill="var(--text)">speak() — «заготовка»</text>
+      <rect x="70" y="200" width="260" height="88" rx="8" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.25"/>
+      <text x="200" y="224" text-anchor="middle" font-weight="600" fill="var(--text)">Dog(Animal)</text>
+      <text x="86" y="244" font-size="11.5" fill="var(--muted)">наследует name и info()</text>
+      <text x="86" y="260" font-size="11.5" fill="var(--text)">speak() — переопределён</text>
+      <text x="86" y="276" font-size="11.5" fill="var(--text)">fetch() — новый метод</text>
+      <rect x="430" y="200" width="260" height="88" rx="8" fill="var(--surface)" stroke="var(--muted)" stroke-width="1.25"/>
+      <text x="560" y="224" text-anchor="middle" font-weight="600" fill="var(--text)">Cat(Animal)</text>
+      <text x="446" y="244" font-size="11.5" fill="var(--muted)">наследует name и info()</text>
+      <text x="446" y="260" font-size="11.5" fill="var(--text)">speak() — переопределён</text>
+      <text x="446" y="276" font-size="11.5" fill="var(--text)">purr() — новый метод</text>
+    </svg>
+    <figcaption>Стрелка с пустым наконечником идёт от наследника к родителю — так наследование рисуют на UML-диаграммах.</figcaption>
+  </figure>
+
+  <h3>Синтаксис</h3>
+  <p>Родительский класс указывают в скобках после имени нового класса: <code>class Dog(Animal):</code>.</p>
+<pre><code class="language-python">class Animal:
+    def __init__(self, name):
+        self.name = name
+
+    def info(self):
+        return f"Я {self.name}"
+
+    def speak(self):
+        return "..."
+
+
+class Dog(Animal):
+    def speak(self):              # переопределяем
+        return "Гав!"
+
+    def fetch(self):              # добавляем новое
+        return f"{self.name} принёс мячик"
+
+
+class Cat(Animal):
+    def speak(self):
+        return "Мяу!"
+
+    def purr(self):
+        return "Мрррр..."
+
+
+rex = Dog("Рекс")
+print(rex.info())    # Я Рекс        ← метод родителя
+print(rex.speak())   # Гав!           ← своя версия
+print(rex.fetch())   # Рекс принёс мячик
+
+print(isinstance(rex, Dog))     # True
+print(isinstance(rex, Animal))  # True — собака является животным
+print(issubclass(Cat, Animal))  # True</code></pre>
+  <p>У <code>Dog</code> нет своего <code>__init__</code> и <code>info</code>, но они работают — взяты у <code>Animal</code>. Когда вы вызываете метод, Python ищет его сначала в классе объекта, потом в родителе, потом в родителе родителя — и берёт первый найденный. Поэтому <code>rex.speak()</code> даёт «Гав!», а не «...».</p>
+  <p><strong>Переопределение метода</strong> (<em>override</em>) — это когда наследник объявляет метод с тем же именем, что и у родителя. Версия наследника заменяет родительскую для его объектов.</p>
+
+  <h3>Функция <code>super()</code></h3>
+  <p>Часто наследнику нужны дополнительные атрибуты, и ему нужен свой <code>__init__</code>. Но тогда родительский <code>__init__</code> автоматически больше не вызывается. Чтобы не копировать его код, его вызывают через <code>super()</code> — функцию, которая даёт доступ к методам родителя.</p>
+<pre><code class="language-python">class Person:
+    def __init__(self, name, age):
+        self.name = name
+        self.age = age
+
+    def __str__(self):
+        return f"{self.name}, {self.age} лет"
+
+
+class Student(Person):
+    def __init__(self, name, age, group):
+        super().__init__(name, age)   # родитель заполнит name и age
+        self.group = group            # а это — новое поле
+
+    def __str__(self):
+        base = super().__str__()      # берём текст родителя...
+        return f"{base}, группа {self.group}"  # ...и дополняем
+
+
+s = Student("Анна", 19, "ИС-21")
+print(s)   # Анна, 19 лет, группа ИС-21</code></pre>
+  <p>Если забыть строку <code>super().__init__(name, age)</code>, у студента не появятся атрибуты <code>name</code> и <code>age</code>, и <code>print(s)</code> упадёт с <code>AttributeError</code>.</p>
+
+  <h3>Иерархии и класс <code>object</code></h3>
+  <p>Наследовать можно цепочкой: <code>Person → Student → Graduate</code>. Все классы в Python неявно наследуются от встроенного класса <code>object</code> — именно оттуда берётся стандартный <code>__str__</code>, который печатает <code>&lt;... object at 0x...&gt;</code>. Запись <code>class Cat:</code> равносильна <code>class Cat(object):</code>.</p>
+  <p>Python также допускает множественное наследование (<code>class C(A, B):</code>), но новичкам его лучше пока не использовать.</p>
+  <div class="callout">
+    <span class="label">Проверь себя</span>
+    <p>Что напечатает <code>Cat("Мурка").info()</code> и почему это работает, хотя в <code>Cat</code> нет метода <code>info</code>? Зачем в <code>Student.__init__</code> нужен <code>super()</code>?</p>
+  </div>
+</section>
+
+<!-- ================= 7 ================= -->
+<section class="card" id="s7">
+  <h2><span class="num">7</span>Полиморфизм и абстракция</h2>
+
+  <h3>Полиморфизм</h3>
+  <p><strong>Полиморфизм</strong> (с греческого «много форм») — это способность одного и того же кода работать с объектами разных классов. Мы вызываем метод с одним именем, а каждый объект выполняет его по-своему.</p>
+  <div class="analogy">
+    <span class="icon" aria-hidden="true">🔌</span>
+    <p>Кнопка «Включить» есть у телевизора, чайника и компьютера. Вы нажимаете одну и ту же кнопку, а каждый прибор делает своё: показывает картинку, греет воду, загружает систему.</p>
+  </div>
+<pre><code class="language-python">animals = [Dog("Рекс"), Cat("Мурка"), Dog("Шарик")]
+
+for animal in animals:
+    print(f"{animal.name}: {animal.speak()}")
+
+# Рекс: Гав!
+# Мурка: Мяу!
+# Шарик: Гав!</code></pre>
+  <p>Цикл не знает и не проверяет, какое именно животное перед ним. Он просто вызывает <code>speak()</code>. Без полиморфизма пришлось бы писать так:</p>
+<pre><code class="language-python"># Плохо: при каждом новом животном нужно править этот if
+if type(animal) == Dog:
+    print("Гав!")
+elif type(animal) == Cat:
+    print("Мяу!")</code></pre>
+  <p>С полиморфизмом добавить корову — значит написать класс <code>Cow(Animal)</code> с методом <code>speak()</code>. Цикл менять не нужно.</p>
+  <p><strong>Утиная типизация.</strong> В Python полиморфизм работает даже без общего родителя. Важно лишь, чтобы у объекта был нужный метод: «если нечто ходит как утка и крякает как утка, то это утка».</p>
+<pre><code class="language-python">class Robot:
+    name = "R2-D2"
+    def speak(self):
+        return "Бип-буп!"
+
+for thing in [Dog("Рекс"), Robot()]:
+    print(thing.speak())   # Гав!  Бип-буп!</code></pre>
+  <p>Встроенный пример полиморфизма — функция <code>len()</code>: она работает со строками, списками и словарями, потому что у каждого из этих классов есть свой <code>__len__</code>. Оператор <code>+</code> тоже полиморфен: <code>2 + 3</code> складывает числа, <code>"a" + "b"</code> склеивает строки.</p>
+
+  <h3>Абстракция</h3>
+  <p><strong>Абстракция</strong> — это выделение главного и отбрасывание неважного. Класс описывает только те свойства и действия, которые нужны программе. Для деканата студент — это ФИО, группа и оценки; цвет глаз и любимая еда в класс <code>Student</code> не попадут.</p>
+  <p>Вторая сторона абстракции — работать с объектом, не зная его устройства. Вы вызываете <code>list.sort()</code> и не думаете, какой алгоритм сортировки внутри.</p>
+  <p>Иногда класс создаётся только как общий «шаблон для наследников», и создавать его объекты не имеет смысла. Какая площадь у «просто фигуры»? Никакая. Такие классы называют <strong>абстрактными</strong>. В Python для них есть модуль <code>abc</code> (<em>Abstract Base Classes</em>):</p>
+<pre><code class="language-python">from abc import ABC, abstractmethod
+
+class Shape(ABC):
+    @abstractmethod
+    def area(self):
+        pass
+
+    def describe(self):                       # обычный метод тоже можно
+        return f"{type(self).__name__}, площадь {self.area():.2f}"
+
+
+class Square(Shape):
+    def __init__(self, side):
+        self.side = side
+
+    def area(self):
+        return self.side ** 2
+
+
+class Circle(Shape):
+    def __init__(self, radius):
+        self.radius = radius
+
+    def area(self):
+        return 3.14159 * self.radius ** 2
+
+
+shapes = [Square(3), Circle(1)]
+for s in shapes:
+    print(s.describe())
+# Square, площадь 9.00
+# Circle, площадь 3.14
+
+Shape()   # TypeError: Can't instantiate abstract class Shape ...</code></pre>
+  <p>Что здесь важно:</p>
+  <ul>
+    <li>класс наследуется от <code>ABC</code>, а метод помечен <code>@abstractmethod</code>;</li>
+    <li>создать объект <code>Shape()</code> нельзя — Python выдаст ошибку;</li>
+    <li>наследник <strong>обязан</strong> реализовать все абстрактные методы, иначе его объект тоже не создать. Это защищает от забытого метода;</li>
+    <li>метод <code>describe</code> написан один раз и работает для любой фигуры — абстракция, наследование и полиморфизм работают вместе.</li>
+  </ul>
+
+  <h3>Итог: четыре принципа ООП</h3>
+  <div class="principles">
+    <div class="principle"><h4>Абстракция</h4><p>Описываем только важное, скрываем детали</p><div class="tools">Классы, <code>ABC</code>, <code>@abstractmethod</code></div></div>
+    <div class="principle"><h4>Инкапсуляция</h4><p>Данные спрятаны, доступ — через методы с проверками</p><div class="tools"><code>_x</code>, <code>__x</code>, <code>@property</code></div></div>
+    <div class="principle"><h4>Наследование</h4><p>Новый класс берёт всё у старого и дополняет</p><div class="tools"><code>class B(A)</code>, <code>super()</code></div></div>
+    <div class="principle"><h4>Полиморфизм</h4><p>Один вызов — разное поведение у разных объектов</p><div class="tools">Переопределение методов, утиная типизация</div></div>
+  </div>
+  <div class="callout">
+    <span class="label">Проверь себя</span>
+    <p>Добавьте в пример класс <code>Triangle(Shape)</code> без метода <code>area</code>. Что произойдёт при попытке создать <code>Triangle()</code> и почему это полезно?</p>
+  </div>
+</section>
+
+<!-- ================= 8 ================= -->
+<section class="card" id="s8">
+  <h2><span class="num">8</span>Типичные ошибки новичков</h2>
+  <p>Почти все ошибки на первых занятиях по ООП — из этого списка. Если программа упала, сначала найдите текст ошибки в левом столбце.</p>
+  <div class="table-wrap"><table>
+    <tr><th>Сообщение об ошибке</th><th>Что написали</th><th>Как исправить</th></tr>
+    <tr><td><code>TypeError: Cat.__init__() takes 1 positional argument but 2 were given</code></td><td>Забыли <code>self</code>: <code>def __init__(name):</code></td><td><code>def __init__(self, name):</code></td></tr>
+    <tr><td><code>NameError: name 'name' is not defined</code></td><td>В методе написали <code>name</code> вместо <code>self.name</code></td><td>К атрибутам внутри класса — только через <code>self.</code></td></tr>
+    <tr><td><code>AttributeError: 'Cat' object has no attribute 'name'</code></td><td>В <code>__init__</code> написали <code>name = name</code> без <code>self.</code></td><td><code>self.name = name</code></td></tr>
+    <tr><td><code>TypeError: Cat() takes no arguments</code></td><td>Опечатка в имени: <code>def __int__</code> или <code>def _init_</code></td><td>Ровно <code>__init__</code>: два подчёркивания с каждой стороны</td></tr>
+    <tr><td>Печатается <code>&lt;bound method ...&gt;</code></td><td>Вызвали метод без скобок: <code>r.area</code></td><td><code>r.area()</code></td></tr>
+    <tr><td>Печатается <code>&lt;__main__.Cat object at 0x...&gt;</code></td><td>Нет метода <code>__str__</code></td><td>Добавить <code>__str__</code>, возвращающий строку</td></tr>
+    <tr><td><code>TypeError: __str__ returned non-string (type NoneType)</code></td><td>В <code>__str__</code> написали <code>print(...)</code></td><td><code>return f"..."</code></td></tr>
+    <tr><td><code>AttributeError</code> у наследника</td><td>В <code>__init__</code> наследника нет <code>super().__init__(...)</code></td><td>Первой строкой вызвать <code>super().__init__(...)</code></td></tr>
+    <tr><td><code>RecursionError: maximum recursion depth exceeded</code></td><td>В сеттере написали <code>self.age = value</code></td><td>Хранить в <code>self._age = value</code></td></tr>
+    <tr><td><code>TypeError: Can't instantiate abstract class</code></td><td>Создали объект абстрактного класса или не реализовали абстрактный метод</td><td>Реализовать все методы с <code>@abstractmethod</code> в наследнике</td></tr>
+  </table></div>
+
+  <h3>Ошибка без сообщения: изменяемый атрибут класса</h3>
+  <p>Самая коварная ошибка — программа не падает, но работает неверно:</p>
+<pre><code class="language-python">class Student:
+    grades = []                  # ОШИБКА: один список на всех!
+
+    def __init__(self, name):
+        self.name = name
+
+a = Student("Анна")
+b = Student("Борис")
+a.grades.append(5)
+print(b.grades)   # [5] — Борис «получил» оценку Анны</code></pre>
+  <p>Список, объявленный в теле класса, один на все объекты. Списки, словари и множества, которые должны быть у каждого свои, создавайте в <code>__init__</code>: <code>self.grades = []</code>.</p>
+  <p>Та же ловушка срабатывает со значением по умолчанию: <code>def __init__(self, grades=[])</code> создаёт один список на все вызовы. Правильно так:</p>
+<pre><code class="language-python">def __init__(self, name, grades=None):
+    self.name = name
+    self.grades = grades if grades is not None else []</code></pre>
+
+  <h3>Путаница класса и объекта</h3>
+<pre><code class="language-python">Student.name          # ОШИБКА: у класса нет имени, имя есть у конкретного студента
+s = Student           # ОШИБКА: забыли скобки, s — это сам класс
+s = Student("Анна")   # правильно: s — объект</code></pre>
+
+  <h3>Отступы</h3>
+  <p>Методы должны быть с отступом внутри <code>class</code>. Если <code>def</code> начать с начала строки, это уже обычная функция, а не метод, и вызов <code>obj.method()</code> даст <code>AttributeError</code>. Используйте 4 пробела на уровень и не смешивайте пробелы с табуляцией.</p>
+</section>
+
+<!-- ================= 9 ================= -->
+<section class="card" id="s9">
+  <h2><span class="num">9</span>Практические задания</h2>
+  <p>Задания 1–5 обязательные, задание 6 — на отличную оценку. Каждое задание — отдельный файл <code>task1.py</code>, <code>task2.py</code> и т.д. В конце каждого файла должен быть код, который создаёт объекты и демонстрирует работу классов. Примеры вывода показывают формат; данные можно взять свои.</p>
+
+  <div class="task">
+    <div class="task-head"><h3>Задание 1. Класс <code>Book</code></h3><span class="tag">класс, конструктор, методы</span></div>
+    <p>Создайте класс <code>Book</code>:</p>
+    <ol>
+      <li>Конструктор принимает <code>title</code>, <code>author</code>, <code>pages</code> и сохраняет их в атрибуты. Дополнительно создаётся атрибут <code>current_page = 0</code>.</li>
+      <li>Метод <code>read(n)</code> увеличивает <code>current_page</code> на <code>n</code>, но не дальше последней страницы.</li>
+      <li>Метод <code>progress()</code> возвращает процент прочитанного, округлённый до целого.</li>
+      <li>Метод <code>is_finished()</code> возвращает <code>True</code>, если книга прочитана.</li>
+      <li>Метод <code>__str__</code> возвращает строку вида <code>«Мастер и Маргарита» — Булгаков (480 стр.)</code>.</li>
+      <li>Создайте две книги и проверьте все методы.</li>
+    </ol>
+<pre class="output"><code>«Мастер и Маргарита» — Булгаков (480 стр.)
+Прочитано: 25%
+Прочитано: 100%
+Книга дочитана: True</code></pre>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><h3>Задание 2. Класс <code>Student</code> со счётчиком</h3><span class="tag">атрибуты класса и экземпляра</span></div>
+    <ol>
+      <li>Атрибут класса <code>university = "Мой колледж"</code> и счётчик <code>total = 0</code>.</li>
+      <li>Конструктор принимает <code>name</code> и <code>group</code>, создаёт пустой список <code>grades</code> и увеличивает <code>Student.total</code> на 1.</li>
+      <li>Метод <code>add_grade(grade)</code> добавляет оценку от 2 до 5. На другие значения выбрасывает <code>ValueError</code>.</li>
+      <li>Метод <code>average()</code> возвращает средний балл (или <code>0</code>, если оценок нет).</li>
+      <li>Создайте трёх студентов, поставьте оценки и докажите, что у каждого свой список оценок, а <code>university</code> и <code>total</code> общие.</li>
+      <li>Обработайте неверную оценку через <code>try/except</code> и выведите сообщение.</li>
+    </ol>
+<pre class="output"><code>Анна (ИС-21): [5, 4, 5], средний балл 4.67
+Борис (ИС-21): [3], средний балл 3.00
+Вера (ИС-22): [], средний балл 0.00
+Всего студентов: 3
+Ошибка: оценка должна быть от 2 до 5</code></pre>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><h3>Задание 3. Банковский счёт</h3><span class="tag">инкапсуляция</span></div>
+    <p>Создайте класс <code>BankAccount</code>:</p>
+    <ol>
+      <li>Владелец — публичный атрибут <code>owner</code>, баланс — приватный <code>__balance</code>.</li>
+      <li>Свойство <code>balance</code> только для чтения (через <code>@property</code>, без сеттера).</li>
+      <li>Методы <code>deposit(amount)</code> и <code>withdraw(amount)</code> с проверками: сумма положительная, снять больше баланса нельзя. При нарушении — <code>ValueError</code>.</li>
+      <li>Приватный список <code>__history</code>: каждая успешная операция добавляет туда строку (<code>"+500"</code>, <code>"-200"</code>).</li>
+      <li>Метод <code>history()</code> возвращает <strong>копию</strong> списка операций, чтобы его нельзя было изменить снаружи.</li>
+      <li>Продемонстрируйте: обычные операции, попытку снять слишком много, попытку написать <code>acc.balance = 1000000</code>.</li>
+    </ol>
+<pre class="output"><code>Баланс: 1300
+Ошибка: недостаточно средств
+Ошибка: баланс нельзя изменить напрямую
+История: ['+1000', '+500', '-200']</code></pre>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><h3>Задание 4. Транспорт</h3><span class="tag">наследование и super()</span></div>
+    <ol>
+      <li>Базовый класс <code>Vehicle</code>: атрибуты <code>brand</code>, <code>model</code>, <code>year</code>; метод <code>info()</code> возвращает <code>"Toyota Camry, 2020"</code>; метод <code>age(current_year)</code> возвращает возраст машины.</li>
+      <li>Класс <code>Car(Vehicle)</code> добавляет атрибут <code>seats</code> и переопределяет <code>info()</code>, используя <code>super().info()</code>.</li>
+      <li>Класс <code>Truck(Vehicle)</code> добавляет <code>capacity</code> (грузоподъёмность в тоннах) и метод <code>can_carry(weight)</code>.</li>
+      <li>В конструкторах наследников обязателен <code>super().__init__(...)</code>.</li>
+      <li>Выведите результат <code>isinstance</code> для грузовика по отношению к <code>Truck</code>, <code>Vehicle</code> и <code>Car</code>.</li>
+    </ol>
+<pre class="output"><code>Toyota Camry, 2020, мест: 5
+KAMAZ 5490, 2018, грузоподъёмность 20 т
+Возраст грузовика: 8 лет
+Увезёт 15 т: True
+Увезёт 25 т: False
+Truck: True, Vehicle: True, Car: False</code></pre>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><h3>Задание 5. Геометрические фигуры</h3><span class="tag">абстракция и полиморфизм</span></div>
+    <ol>
+      <li>Абстрактный класс <code>Shape(ABC)</code> с абстрактными методами <code>area()</code> и <code>perimeter()</code>.</li>
+      <li>Наследники: <code>Rectangle(width, height)</code>, <code>Circle(radius)</code>, <code>Triangle(a, b, c)</code>. Площадь треугольника — по формуле Герона (ниже).</li>
+      <li>В конструкторе <code>Triangle</code> проверьте, что треугольник существует (каждая сторона меньше суммы двух других).</li>
+      <li>В каждом классе — <code>__str__</code>.</li>
+      <li>Функция <code>total_area(shapes)</code> (не метод!) возвращает сумму площадей любых фигур. В ней нельзя проверять тип фигуры.</li>
+      <li>Отсортируйте список фигур по площади: <code>sorted(shapes, key=lambda s: s.area())</code>.</li>
+      <li>Покажите, что <code>Shape()</code> создать нельзя.</li>
+    </ol>
+    <p>Формула Герона, где <em>p</em> — полупериметр:</p>
+    <div class="formula">S = √( p(p − a)(p − b)(p − c) ), &nbsp;&nbsp; p = (a + b + c) / 2</div>
+<pre class="output"><code>Круг r=1: площадь 3.14, периметр 6.28
+Треугольник 3x4x5: площадь 6.00, периметр 12.00
+Прямоугольник 3x4: площадь 12.00, периметр 14.00
+Общая площадь: 21.14
+Ошибка: нельзя создать абстрактную фигуру</code></pre>
+  </div>
+
+  <div class="task">
+    <div class="task-head"><h3>Задание 6*. Интернет-магазин</h3><span class="tag star">все принципы вместе</span></div>
+    <ol>
+      <li>Класс <code>Product</code>: <code>name</code>, <code>price</code> (свойство с проверкой: цена &gt; 0), метод <code>final_price()</code> возвращает цену.</li>
+      <li>Наследник <code>DiscountProduct(Product)</code> добавляет <code>discount</code> (проценты, 0–90) и переопределяет <code>final_price()</code>.</li>
+      <li>Класс <code>Cart</code>: приватный словарь «товар → количество», методы <code>add(product, qty=1)</code>, <code>remove(product)</code>, <code>total()</code>.</li>
+      <li>В <code>Cart</code> реализуйте <code>__len__</code> (количество всех единиц товара) и <code>__str__</code> (чек).</li>
+      <li><code>total()</code> не должен знать, есть ли у товара скидка, — используйте полиморфизм.</li>
+    </ol>
+<pre class="output"><code>Чек:
+  Ноутбук x1 = 60000.00
+  Мышь (-20%) x2 = 1600.00
+Всего товаров: 3
+Итого: 61600.00</code></pre>
+  </div>
+</section>
+
+<!-- ================= 10 ================= -->
+<section class="card" id="s10">
+  <h2><span class="num">10</span>Контрольные вопросы, отчёт и оценка</h2>
+
+  <h3>Контрольные вопросы</h3>
+  <p>На защите преподаватель задаёт 2–3 вопроса из списка и просит показать ответ на своём коде.</p>
+  <ol>
+    <li>Что такое ООП? Чем оно отличается от процедурного подхода?</li>
+    <li>Чем класс отличается от объекта? Приведите пример из жизни.</li>
+    <li>Для чего нужен метод <code>__init__</code> и когда он вызывается?</li>
+    <li>Что такое <code>self</code>? Почему его не передают при вызове метода?</li>
+    <li>Чем атрибут класса отличается от атрибута экземпляра? Когда использовать каждый?</li>
+    <li>Чем отличаются <code>__str__</code> и <code>__repr__</code>?</li>
+    <li>Что такое инкапсуляция? Что означают одно и два подчёркивания перед именем атрибута?</li>
+    <li>Для чего нужен <code>@property</code>? Как сделать свойство только для чтения?</li>
+    <li>Что такое наследование? Как Python ищет метод у объекта наследника?</li>
+    <li>Для чего используется <code>super()</code>? Что будет, если забыть <code>super().__init__()</code>?</li>
+    <li>Что такое переопределение метода?</li>
+    <li>Что такое полиморфизм? Приведите пример из своего кода и из встроенных функций Python.</li>
+    <li>Что такое утиная типизация?</li>
+    <li>Что такое абстрактный класс? Почему нельзя создать его объект?</li>
+    <li>Почему список, который должен быть у каждого объекта своим, нужно создавать в <code>__init__</code>, а не в теле класса?</li>
+  </ol>
+
+  <h3>Содержание отчёта</h3>
+  <ol class="steps">
+    <li>Титульный лист: название работы, ФИО, группа, дата.</li>
+    <li>Цель работы.</li>
+    <li>По каждому заданию: условие, исходный код, скриншот или текст вывода программы.</li>
+    <li>К заданиям 4 и 5 — схема иерархии классов (как в разделе 6), можно от руки.</li>
+    <li>Вывод: 3–5 предложений о том, что нового узнали и что вызвало трудности.</li>
+  </ol>
+
+  <h3>Требования к коду</h3>
+  <ul>
+    <li>Имена классов — <code>CamelCase</code>, имена методов и атрибутов — <code>snake_case</code>.</li>
+    <li>Каждый класс и метод снабжён короткой строкой документации (<code>"""Что делает метод"""</code>).</li>
+    <li>Нет повторяющегося кода: общее вынесено в родительский класс.</li>
+    <li>Программа запускается без необработанных ошибок: ожидаемые <code>ValueError</code> перехвачены через <code>try/except</code>.</li>
+  </ul>
+
+  <h3>Критерии оценки</h3>
+  <div class="table-wrap"><table>
+    <tr><th>Оценка</th><th>Что нужно сделать</th></tr>
+    <tr><td><span class="grade g5">5 — отлично</span></td><td>Выполнены задания 1–6, код соответствует требованиям, даны уверенные ответы на вопросы</td></tr>
+    <tr><td><span class="grade g4">4 — хорошо</span></td><td>Выполнены задания 1–5, допущены незначительные недочёты, ответы с небольшими подсказками</td></tr>
+    <tr><td><span class="grade g3">3 — удовлетворительно</span></td><td>Выполнены задания 1–3, студент объясняет свой код, но путается в терминах</td></tr>
+    <tr><td><span class="grade g2">Не зачтено</span></td><td>Выполнено менее трёх заданий или студент не может объяснить код</td></tr>
+  </table></div>
+</section>
+
+<footer>Лабораторная работа «Основы ООП в Python»</footer>
+</main>
+</div>
+
+<script>
+(function () {
+  try { if (window.hljs) hljs.highlightAll(); } catch (e) {}
+
+  // Copy buttons
+  document.querySelectorAll('pre').forEach(function (pre) {
+    var btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'copy-btn';
+    btn.textContent = 'Копировать';
+    btn.addEventListener('click', function () {
+      var text = pre.querySelector('code').innerText;
+      var done = function () {
+        btn.textContent = 'Скопировано';
+        setTimeout(function () { btn.textContent = 'Копировать'; }, 1500);
+      };
+      if (navigator.clipboard) navigator.clipboard.writeText(text).then(done, function () {});
+    });
+    pre.appendChild(btn);
+  });
+
+  // Theme toggle
+  var root = document.documentElement;
+  try {
+    var saved = localStorage.getItem('lab-theme');
+    if (saved) root.setAttribute('data-theme', saved);
+  } catch (e) {}
+  document.getElementById('themeBtn').addEventListener('click', function () {
+    var isDark = root.getAttribute('data-theme')
+      ? root.getAttribute('data-theme') === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches;
+    var next = isDark ? 'light' : 'dark';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem('lab-theme', next); } catch (e) {}
+  });
+
+  // Active TOC link
+  var links = Array.prototype.slice.call(document.querySelectorAll('.toc a'));
+  var map = {};
+  links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) {
+          links.forEach(function (l) { l.classList.remove('active'); });
+          var a = map[en.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    document.querySelectorAll('main section[id]').forEach(function (s) { obs.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
